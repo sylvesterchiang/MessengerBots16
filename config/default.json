@@ -3,11 +3,11 @@
     "host_url": "", //ngrok URL here
 
     //FACEBOOK CREDENTIALS
-    "fb_appSecret": "",
-    "fb_pageAccessToken": "",
-    "fb_validationToken": "",
+    "fb_appSecret": "2c987a1c83bdd8d8c86ccf68c0185563",
+    "fb_pageAccessToken": "EAACO7knNTyIBAEQ6K9GUr0CZAQHfFR5dmweuatoEDVS33ZB4EmtQzFrsZAWQXepZBqWwICk1nViYkj6CkvSodvdBqCMZBiQL7xmQh6nRTG74LRwfcPLRi12wJ6rEQnCRQf0MbyApucxAOGw59wuaij5fVSmUAJOOEDFrTcu2ZA1wZDZD",
+    "fb_validationToken": "idontknowwhatimdoing",
 
     //SHOPIFY CREDENTIALS
-    "sh_apiKey": "",
-    "sh_apiPassword": "",
+    "sh_apiKey": "d30ac1dba7a4f1cf5b494f21d11667c0",
+    "sh_apiPassword": "a9862d7cfd3190ee9432d6d80e576ca0",
 }
