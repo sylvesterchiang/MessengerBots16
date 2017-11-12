@@ -29,12 +29,13 @@ var catalogueSchema = new mongoose.Schema({
   labels: {type: mongoose.Schema.Types.Mixed}
 })
 
+var Catalogue = mongoose.model("Catalogue", catalogueSchema, "catalogue");
 mongoose.connection.on('open', function(ref){
-  var Catalogue = mongoose.model("Catalogue", catalogueSchema, "catalogue");
   console.log('connected to mongo server');
   Catalogue.find({}, function(err, items){
     console.log('found catalogue items');
-    var citems = items;
+    //console.log(items[0])
+    //var citems = items;
   })
   //console.log(Catalogue.find());
   //var citems = Catalogue.find({});
@@ -342,6 +343,32 @@ function handleQuickReplyResponse(event) {
 }
 
 /*
+SIMILAIRTY FUNCTION
+*/
+function similarityScore(a, b){
+  var match = 0
+  var adict = {}
+  for (var i = 0; i < a.length; i++){
+    adict[a[i].description] = a[i].score
+  }
+  for (var i = 0; i < b.length; i++){
+    if (b[i].description in adict){
+      //match.push({b[i].description, Math.min(adict[b[i].description], b[i].confidence)})
+      match = match + (Math.min(adict[b[i].description], b[i].score))
+    }
+  }
+  return match
+}
+
+function compare(a,b) {
+  if (a.score < b.score)
+     return -1;
+  if (a.score > b.score)
+    return 1;
+  return 0;
+}
+
+/*
  * This response uses templateElements to present the user with a carousel
  * You send ALL of the content for the selected feature and they can 
  * swipe from side to side to see it
@@ -377,27 +404,7 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
   switch (requestPayload.action) {
 
     case 'QR_GET_SIMILAR_PRODUCT':
-      var products = shopify.product.list({ limit: requestPayload.limit});
-      products.then(function(listOfProducs) {
-        listOfProducs.forEach(function(product) {
-          var url = HOST_URL + "/product.html?id="+product.id;
-          templateElements.push({
-            title: product.title,
-            subtitle: product.tags,
-            image_url: product.image.src,
-            buttons:[
-              {
-                "type":"web_url",
-                "url": url,
-                "title":"Read description",
-                "webview_height_ratio": "compact",
-                "messenger_extensions": "true"
-              },
-              sectionButton('Get options', 'QR_GET_PRODUCT_OPTIONS', {id: product.id})
-            ]
-          });
-        });
-      });
+    templateElements = [];
       console.log('okay image');
       var request = {
         "source": {
@@ -408,19 +415,73 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
         .then((results) => {
           var labels = results[0].labelAnnotations;
           console.log(labels);
-          var messageData = {
-            recipient: {
-              id: recipientId
-            },
-            message: {
-              text: results[0].labelAnnotations
-            }
-          }
+          Catalogue.find({}, function(err, items){
+            console.log('found catalogue items');
 
-          callSendAPI(messageData)
+            var scores = []
+            //items[0].labels.responses[0].labelAnnotations
+            items.forEach(function(item){
+              scores.push({
+                'product_id': item.id,
+                'score': similarityScore(item.labels.responses[0].labelAnnotations, labels)
+              })
+            })  
+            //sorts based on attribute
+            scores.sort(compare);
+            var best = scores.slice(0, 5);
+            var best_dict = {}
+            best.forEach(function(i){
+              best_dict[i.product_id] = i.score
+            });
+            console.log(best_dict)
+            var products = shopify.product.list({ limit: 25});
+            products.then(function(listOfProducts) {
+              listOfProducts.forEach(function(product){
+                if (product.id in best_dict){
+                  console.log('FOUND MATCH');
+                  console.log(product.id);
+                  console.log(best_dict[product.id])
+                  var url = HOST_URL + "/product.html?id="+product.id;
+                  templateElements.push({
+                    title: product.title,
+                    subtitle: product.tags,
+                    image_url: product.image.src,
+                    buttons:[
+                      {
+                        "type":"web_url",
+                        "url": url,
+                        "title":"match score: " + best_dict[product.id],
+                        "webview_height_ratio": "compact",
+                        "messenger_extensions": "true"
+                      },
+                      //sectionButton('Get options', 'QR_GET_PRODUCT_OPTIONS', {id: product.id})
+                    ]
+                  });
+                }
+              });
+
+              var messageData = {
+                recipient: {
+                  id: recipientId
+                },
+                message: {
+                  attachment: {
+                    type: "template",
+                    payload: {
+                      template_type: "generic",
+                      elements: templateElements
+                    }
+                  }
+                }
+              };
+
+              callSendAPI(messageData);
+            });
+          });
         })
 
     case 'QR_GET_PRODUCT_LIST':
+      console.log("GETTING PRODUCT LIST")
       var products = shopify.product.list({ limit: 3});
       products.then(function(listOfProducs) {
         listOfProducs.forEach(function(product) {
@@ -465,6 +526,7 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
       break;
 
     case 'QR_GET_PRODUCT_OPTIONS':
+      console.log("GETTING PRODUCT OPTIONS");
       var sh_product = shopify.product.get(requestPayload.id);
       sh_product.then(function(product) {
         var options = '';
