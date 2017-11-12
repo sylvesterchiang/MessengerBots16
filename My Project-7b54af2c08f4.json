@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "curious-athlete-112207",
+  "private_key_id": "7b54af2c08f4d4e897b72d3649dd8f5b2d7037d7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCcCG7niLp4bmzH\n4gfE3EnRizK5nRnuXPrZpcW5P27/PXdmInAsnL0tO0c8IRlBgjDoD5iDHBzd52AL\nwAzJwcMCZC+tGOKYFXa8elXMJIQACcSYsUlMQwa27eLKBKCymNmlKMHFoI1xOUm6\nZp086/FTi5KL1YzppM9eB2tvm3CbC/1FevyDdO68dDL6aXICAr2i8uIe1NJFmMfT\nAKEcB3+VouPfdB75fqthgcalOzcRmF4N9NNV9NTk9K6rg9skKAuXCA8adHvdx4bx\nMPTHwHAMy8J+KVO9QTHPnTeMm0QYvb70b9vU4f6MHkEYOzCalVmm85gFCkh8VezT\nlx+oTl8lAgMBAAECggEABd50ViL+CT3Ku4RR5f1M4oPxmxU2GTw9QZawa/zJ6Zxa\ng3M2qcWV1l/Kg2Vm/DWP2N64o2/ZLx3pmS+MBkJn7yJXv73190ymtsVZjlBDoyEQ\nQxe3XytjPdoPTn7OO5baaDxdo4JxPN8ahJd2VnO1KVRl5VAZmN02i+h2tE/nXvw4\nAPK6IuFbKlbK6j6iYvceH/n9UdgiVIWDDH6BigfUeaCrPImx+k4rswkmJOO1v4/y\nxuDLU3oXleIwObTGH7nji518QF/Kp9IOmwrDP/npJ6BMK7ca1DB6JKifdQcj97H3\nuCW/RlPtAOpQXNV0lemUKElngmgoFtbDam38Lg086QKBgQDOMt+kXdZ1LLwUjM5H\ngXLFiHC8ZoDTX/1ouDCiZQjsK//V5ef8WsXPVQwVFClT8s7P5T/26dDUfDZgeDjt\nfC4qhSiB8ejRrI38+rZ7j9OBkrlPo1n1FMi+JNi1lPBpoCPdOzp3+15s33Ery9nI\nHfXmkWI7gUqbQCdG1noEZf3hHQKBgQDBt9fw4esCBJcGVvG82gvhG7MOXL7W9XpS\ni/7AC8I2UKwCLMmR3qcQ54fbgD5zX/e5kbfGCltLpIYuJ/kaamrbihOyu3I6HgrS\nked+q/hpJXcBcKeo4W9xYHymAVUo8nnwdVHe1d30KJaxHog40xQeR0MzUqu6qrhq\nB5h4LOdfqQKBgHVI0JZwXZSGnnBd6tMXWU3sHpu6/hm85qnS4q7sIxgaqslinQKY\nKx2UNWwj7KH4YRQ1RJ3QPt0tzcwvdcn3MVc0KGdJTvE8YgL8JCHCHD7+UvNuabOS\nX+Bvmugl0F10HhIvJ0Gps/rfWULdD4HZMM418ZcBIouOAQk043BvBuotAoGANwOy\n++HtD+Gl0lMWy/9QqFlpfIayW/HTD2ZarseoHCzE7MkzZY3J/G8Ekj3Vfoaen8DW\nZBPE4bKTuL/5apsWRcrs1TGOuxqVEEAHcl38akANkAciVj/Pmm9AdxShzsMuBjAL\nVDGAmzp7sUluflTTvdWXLBgqVRTu0o3dqyN1giECgYBaPsMrihirDgQ8Y81QKxpX\n1uBevQyVl3H3RywyqBOTV13jaY9dO1Oeaq+Z5GAC82Tl03CJYia0yVYt4hrK6svb\n6xyeYm56OB5RP3gfWlnw2QTaDqVgHTo3+pXl1x1cmYFeyd7JBqbucGcUSfsMAMad\ni0E7HZCXpc3OyM80As63Ww==\n-----END PRIVATE KEY-----\n",
+  "client_email": "syl-578@curious-athlete-112207.iam.gserviceaccount.com",
+  "client_id": "106805139564558239388",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/syl-578%40curious-athlete-112207.iam.gserviceaccount.com"
+}

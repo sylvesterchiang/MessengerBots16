@@ -17,8 +17,30 @@ const
   express = require('express'),
   https = require('https'),  
   request = require('request'),
-  Shopify = require('shopify-api-node');
+  Shopify = require('shopify-api-node'),
+  Vision = require('@google-cloud/vision');
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/users');
 
+//var catalogueSchema = new mongoose.Schema({}, {'strict':false});
+var catalogueSchema = new mongoose.Schema({
+  id: {type:Number, require:true}, 
+  labels: {type: mongoose.Schema.Types.Mixed}
+})
+
+mongoose.connection.on('open', function(ref){
+  var Catalogue = mongoose.model("Catalogue", catalogueSchema, "catalogue");
+  console.log('connected to mongo server');
+  Catalogue.find({}, function(err, items){
+    console.log('found catalogue items');
+    var citems = items;
+  })
+  //console.log(Catalogue.find());
+  //var citems = Catalogue.find({});
+});
+
+var vision = new Vision()
 var app = express();
 app.set('port', process.env.PORT || 5000);
 app.set('view engine', 'ejs');
@@ -223,17 +245,49 @@ function receivedMessage(event) {
   if (messageText) {
 
     var lcm = messageText.toLowerCase();
-    switch (lcm) {
-      // if the text matches any special keywords, handle them accordingly
-      case 'help':
-        sendHelpOptionsAsButtonTemplates(senderID);
-        break;
-      
-      default:
-        // otherwise, just echo it back to the sender
-        sendTextMessage(senderID, messageText);
+
+    if (lcm === 'help'){
+      sendHelpOptionsAsButtonTemplates(senderID);
+    }
+    else if (lcm.includes('image')){
+      sendFindImageButton(senderID, messageText.split(' ')[1])
+    }
+    else{
+      sendTextMessage(senderID, messageText);
     }
   }
+}
+
+/*
+submit image for similarity matching
+*/
+function sendFindImageButton(recipientId, imageUrl){
+  console.log('trying to find similarity');
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment:{
+        type:"template",
+        payload:{
+          template_type:"button",
+          text:"Click the button to get a list of similar products",
+          buttons:[
+            {
+              "type":"postback",
+              "title":"similar products",
+              "payload":JSON.stringify({action: 'QR_GET_SIMILAR_PRODUCT', limit: 5, url: imageUrl})
+            }
+            // limit of three buttons 
+          ]
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 /*
@@ -321,8 +375,53 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
   }
 
   switch (requestPayload.action) {
-    case 'QR_GET_PRODUCT_LIST':
+
+    case 'QR_GET_SIMILAR_PRODUCT':
       var products = shopify.product.list({ limit: requestPayload.limit});
+      products.then(function(listOfProducs) {
+        listOfProducs.forEach(function(product) {
+          var url = HOST_URL + "/product.html?id="+product.id;
+          templateElements.push({
+            title: product.title,
+            subtitle: product.tags,
+            image_url: product.image.src,
+            buttons:[
+              {
+                "type":"web_url",
+                "url": url,
+                "title":"Read description",
+                "webview_height_ratio": "compact",
+                "messenger_extensions": "true"
+              },
+              sectionButton('Get options', 'QR_GET_PRODUCT_OPTIONS', {id: product.id})
+            ]
+          });
+        });
+      });
+      console.log('okay image');
+      var request = {
+        "source": {
+          "imageUri": requestPayload.url
+        }
+      }
+      vision.labelDetection(request)
+        .then((results) => {
+          var labels = results[0].labelAnnotations;
+          console.log(labels);
+          var messageData = {
+            recipient: {
+              id: recipientId
+            },
+            message: {
+              text: results[0].labelAnnotations
+            }
+          }
+
+          callSendAPI(messageData)
+        })
+
+    case 'QR_GET_PRODUCT_LIST':
+      var products = shopify.product.list({ limit: 3});
       products.then(function(listOfProducs) {
         listOfProducs.forEach(function(product) {
           var url = HOST_URL + "/product.html?id="+product.id;
