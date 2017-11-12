@@ -4,6 +4,24 @@ Follow these steps to get your team's bot configured and off the ground.
 
 > Each team member must create a personal Facebook account and a Facebook developer account [here] (https://developers.facebook.com/) 
 
+## What this does
+
+I figured it's hard sometimes to describe what you're shopping for, and to classify it down to tags as
+a shopper. It's a lot more intuitive at times to have a photo of the product you're looking for.
+So wanted to create a workflow where the client could paste in an image link, and the messenger bot
+will respond with the most similar products available. 
+
+To do this we used the Google Vision API, to generate a list of labels. We generated labels for all the
+images in the catalogue and stored them in a MongoDB database so we wouldn't have to make repeated
+API calls which would take a loto f time, and also because the credit limit for the free tier is low. 
+We calculated a similarity metric, using overlapping labels as well as the associated confidence score
+for each label. Finally we return the most simlar items to the user. 
+
+## To generate the mongodb local database run:
+
+`mongoimport --db users --collection catalogue --file catalogue.json`
+
+
 ## Before you begin - team tasks
 
 * Create a Facebook page [here] (https://www.facebook.com/pages/create) 

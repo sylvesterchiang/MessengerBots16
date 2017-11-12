@@ -250,6 +250,9 @@ function receivedMessage(event) {
     if (lcm === 'help'){
       sendHelpOptionsAsButtonTemplates(senderID);
     }
+    else if (lcm.includes('lonely')){
+      sendTextMessage(senderID, "¯\\_(ツ)_/¯");
+    }
     else if (lcm.includes('image')){
       sendFindImageButton(senderID, messageText.split(' ')[1])
     }
@@ -362,9 +365,9 @@ function similarityScore(a, b){
 
 function compare(a,b) {
   if (a.score < b.score)
-     return -1;
+     return 1;
   if (a.score > b.score)
-    return 1;
+    return -1;
   return 0;
 }
 
@@ -430,13 +433,15 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
             scores.sort(compare);
             var best = scores.slice(0, 5);
             var best_dict = {}
+            console.log(best)
             best.forEach(function(i){
               best_dict[i.product_id] = i.score
             });
             console.log(best_dict)
-            var products = shopify.product.list({ limit: 25});
+            var products = shopify.product.list({ limit: 112});
             products.then(function(listOfProducts) {
               listOfProducts.forEach(function(product){
+                //console.log(product.id);
                 if (product.id in best_dict){
                   console.log('FOUND MATCH');
                   console.log(product.id);
@@ -480,6 +485,8 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
           });
         })
 
+        break
+    
     case 'QR_GET_PRODUCT_LIST':
       console.log("GETTING PRODUCT LIST")
       var products = shopify.product.list({ limit: 3});
