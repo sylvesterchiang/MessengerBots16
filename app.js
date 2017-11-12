@@ -250,9 +250,6 @@ function receivedMessage(event) {
     if (lcm === 'help'){
       sendHelpOptionsAsButtonTemplates(senderID);
     }
-    else if (lcm.includes('lonely')){
-      sendTextMessage(senderID, "¯\\_(ツ)_/¯");
-    }
     else if (lcm.includes('image')){
       sendFindImageButton(senderID, messageText.split(' ')[1])
     }
@@ -441,7 +438,7 @@ function respondToHelpRequestWithTemplates(recipientId, requestForHelpOnFeature)
             var products = shopify.product.list({ limit: 112});
             products.then(function(listOfProducts) {
               listOfProducts.forEach(function(product){
-                //console.log(product.id);
+                console.log(product.id);
                 if (product.id in best_dict){
                   console.log('FOUND MATCH');
                   console.log(product.id);
